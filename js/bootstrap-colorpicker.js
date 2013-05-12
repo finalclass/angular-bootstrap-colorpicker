@@ -339,7 +339,9 @@
 				$this.data('colorpicker', (data = new Colorpicker(this, $.extend({}, $.fn.colorpicker.defaults,options))));
 			}
 
-			if (typeof option == 'string') data[option]();
+			if (typeof option == 'string') {
+                data[option].apply(data, arguments.slice(1));
+            }
 		});
 	};
 

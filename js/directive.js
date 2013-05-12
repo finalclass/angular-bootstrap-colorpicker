@@ -1,36 +1,32 @@
-'use strict';
+(function () {
+    'use strict';
 
-/* Directives */
-var app = angular.module('myApp');
+    /* Directives */
+    var boot = angular.module('bootColorPicker', []);
 
-// Add a directive for the bootstrap color picker widget
-// http://www.eyecon.ro/bootstrap-colorpicker/
-app.directive('colorpicker', function() {
-
-    return {
-        require: '?ngModel',
-        link: function(scope, element, attrs, controller) {
-            var updateModel;
-
-            if(controller != null) {
-                updateModel = function(value) {
-                    return scope.$apply(function() {
-                        return controller.$setViewValue(value);
+    // Add a directive for the bootstrap color picker widget
+    // http://www.eyecon.ro/bootstrap-colorpicker/
+    boot.directive('bootColorPicker', function() {
+        return {
+            scope: {
+                bootColorPicker: '='
+            },
+            link: function(scope, element, attrs, controller) {
+                element
+                    .data('color', scope.bootColorPicker)
+                    .colorpicker()
+                    .on('changeColor', function (event) {
+                        scope.$apply(function () {
+                            scope.bootColorPicker = event.color.toHex();
+                        });
                     });
-                };
 
-                controller.$render = function() {
-                    return element.colorpicker("setColor", controller.$viewValue).on('changeColor', function(e) {
-                        if(updateModel) updateModel(e.color.toHex());
-                    });
-                };
+                scope.$watch('bootColorPicker', function (newValue, oldValue) {
+                    element.data('color', newValue);
+                    element.data('colorpicker').update()
+                });
             }
+        };
+    });
 
-            return element.colorpicker().on('changeColor', function(e) {
-                if(updateModel) updateModel(e.color.toHex());
-            });
-
-        }
-    };
-});
-
+}());
